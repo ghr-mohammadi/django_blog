@@ -1,0 +1,11 @@
+secret_key = 'SECERT_KEY'
+
+databases = {
+    'default': {
+        'ENGINE': 'ENGINE NAME',
+        'NAME': 'DATABASE NAME',
+        'USER': 'DATABASE USERNAME',
+        'PASSWORD': 'DATABASE PASSWORD',
+        'HOST': 'HOST NAME'
+    }
+}
