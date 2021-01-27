@@ -1,3 +1,4 @@
+django_blog/django_blog/local_settings.py
 django_venv/
 media/post/
 media/profile/
