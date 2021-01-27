@@ -17,7 +17,8 @@ class BlogUser(AbstractBaseUser):
     email = models.EmailField(verbose_name='ایمیل', max_length=120, unique=True)
     username = models.CharField(verbose_name='نام کاربری', max_length=80, unique=True)
     password = models.TextField(verbose_name='رمز ورود')
-    phone_number = models.CharField(validators=[RegexValidator(regex='09[0-9]{9}', message='شماره موبایل وارد کنید')], max_length=11)
+    phone_number = models.CharField(validators=[RegexValidator(regex='09[0-9]{9}', message='شماره موبایل وارد کنید')],
+                                    max_length=11)
     image = models.ImageField(verbose_name='تصویر پروفایل', upload_to='profile/')
     position = models.CharField(verbose_name='رده کاربر', max_length=8, choices=positions, default=positions[0][0])
 
@@ -31,12 +32,12 @@ def user_directory_path(instance, filename):
 
 
 class Post(models.Model):
-    creator_id = models.OneToOneField(BlogUser, on_delete=models.CASCADE)
+    creator = models.OneToOneField(BlogUser, on_delete=models.CASCADE)
     text = models.TextField(verbose_name='متن')
     category = models.CharField(verbose_name='دسته‌بندی', max_length=80)
     category_full = models.TextField(verbose_name='دسته‌بندی - نام کامل')
     status = models.BooleanField(verbose_name='وضعیت', default=False)
-    create_time = models.DateTimeField(verbose_name='زمان ایجاد', default=timezone.now)
+    create_datetime = models.DateTimeField(verbose_name='زمان ایجاد', default=timezone.now)
     parent_post = models.OneToOneField('Post', on_delete=models.CASCADE, null=True)
     tag = models.ManyToManyField('Tag', through='TagPost')
     image = models.ImageField(verbose_name='تصویر پست', upload_to=user_directory_path, null=True)
@@ -73,8 +74,8 @@ class Like(models.Model):
         ('dislike', -1)
     ]
 
-    user = models.ForeignKey(BlogUser, on_delete=models.CASCADE, verbose_name='وبلاگ نویس')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='پست')
+    user = models.OneToOneField(BlogUser, on_delete=models.CASCADE, verbose_name='وبلاگ نویس')
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, verbose_name='پست')
     value = models.IntegerField(verbose_name='مقدار', choices=values, default=values[0][0])
 
     class Meta:
@@ -82,4 +83,27 @@ class Like(models.Model):
         verbose_name_plural = "لایک‌ها"
         unique_together = ("user", "post")
 
-# class Edit(models.Model):
+
+class Edit(models.Model):
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, verbose_name='پست')
+    editor = models.OneToOneField(BlogUser, on_delete=models.CASCADE, verbose_name='وبلاگ نویس')
+    edit_datetime = models.DateTimeField(verbose_name='زمان ویرایش', default=timezone.now)
+    old_text = models.TextField(verbose_name='متن')
+    old_category = models.CharField(verbose_name='دسته‌بندی', max_length=80, blank=True)
+    old_category_full = models.TextField(verbose_name='دسته‌بندی - نام کامل', blank=True)
+    old_tag = models.ManyToManyField('Tag', through='TagEdit', blank=True)
+    old_image = models.ImageField(verbose_name='تصویر پست', upload_to=user_directory_path, null=True)
+
+    class Meta:
+        verbose_name = "ویرایش"
+        verbose_name_plural = "ویرایش‌ها"
+
+
+class TagEdit(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, verbose_name='تگ')
+    edit = models.ForeignKey(Edit, on_delete=models.CASCADE, verbose_name='ویرایش')
+
+    class Meta:
+        verbose_name = "تگ-ویرایش"
+        verbose_name_plural = "تگ-ویرایش‌ها"
+        unique_together = ("tag", "edit")
