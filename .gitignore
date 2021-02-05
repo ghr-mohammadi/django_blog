@@ -1,7 +1,6 @@
 django_blog/django_blog/local_settings.py
 django_venv/
-media/post/
-media/profile/
+django_blog/media/*
 __pycache__/
 .cache/
 .pytest_cache/

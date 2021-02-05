@@ -1,26 +1,20 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.utils import timezone
 
 
-class BlogUser(AbstractBaseUser):
-    positions = [
-        ('normal', 'ساده'),
-        ('writer', 'نویسنده'),
-        ('editor', 'ویراستار'),
-        ('manager', 'مدیر')
-    ]
+class BlogUser(AbstractUser):
+    positions = [('normal', 'ساده'), ('writer', 'نویسنده'), ('editor', 'ویراستار'), ('manager', 'مدیر')]
 
-    first_name = models.CharField(verbose_name='نام', max_length=80)
-    last_name = models.CharField(verbose_name='نام خانوادگی', max_length=80)
-    email = models.EmailField(verbose_name='ایمیل', max_length=120, unique=True)
-    username = models.CharField(verbose_name='نام کاربری', max_length=80, unique=True)
-    password = models.TextField(verbose_name='رمز ورود')
-    phone_number = models.CharField(validators=[RegexValidator(regex='09[0-9]{9}', message='شماره موبایل وارد کنید')],
-                                    max_length=11)
-    image = models.ImageField(verbose_name='تصویر پروفایل', upload_to='profile/')
-    position = models.CharField(verbose_name='رده کاربر', max_length=8, choices=positions, default=positions[0][0])
+    phone_number = models.CharField(verbose_name='شماره تلفن',
+                                    validators=[RegexValidator(regex='0[0-9]{10}', message='شماره تلفن وارد کنید')],
+                                    max_length=11, blank=True)
+    position = models.CharField(verbose_name='رده کاربر', max_length=8, choices=positions, default=positions[0][0],
+                                blank=True)
+    image = models.ImageField(verbose_name='تصویر پروفایل', upload_to='profile/', blank=True)
+
+    REQUIRED_FIELDS = AbstractUser.REQUIRED_FIELDS + ['first_name', 'last_name', 'phone_number', 'position', 'image']
 
     class Meta:
         verbose_name = 'وبلاگ نویس'
@@ -68,12 +62,7 @@ class TagPost(models.Model):
 
 
 class Like(models.Model):
-    values = [
-        ('null', 0),
-        ('like', 1),
-        ('dislike', -1)
-    ]
-
+    values = [('null', 0), ('like', 1), ('dislike', -1)]
     user = models.OneToOneField(BlogUser, on_delete=models.CASCADE, verbose_name='وبلاگ نویس')
     post = models.OneToOneField(Post, on_delete=models.CASCADE, verbose_name='پست')
     value = models.IntegerField(verbose_name='مقدار', choices=values, default=values[0][0])
