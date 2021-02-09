@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ('old_text', models.TextField(verbose_name='متن')),
                 ('old_category', models.CharField(blank=True, max_length=80, verbose_name='دسته\u200cبندی')),
                 ('old_category_full', models.TextField(blank=True, verbose_name='دسته\u200cبندی - نام کامل')),
-                ('old_image', models.ImageField(null=True, upload_to=blog.models.user_directory_path, verbose_name='تصویر پست')),
+                ('old_image', models.ImageField(null=True, upload_to=blog.models.post_user_path, verbose_name='تصویر پست')),
                 ('editor', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='وبلاگ نویس')),
             ],
             options={
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                 ('category_full', models.TextField(verbose_name='دسته\u200cبندی - نام کامل')),
                 ('status', models.BooleanField(default=False, verbose_name='وضعیت')),
                 ('create_datetime', models.DateTimeField(default=django.utils.timezone.now, verbose_name='زمان ایجاد')),
-                ('image', models.ImageField(null=True, upload_to=blog.models.user_directory_path, verbose_name='تصویر پست')),
+                ('image', models.ImageField(null=True, upload_to=blog.models.post_user_path, verbose_name='تصویر پست')),
                 ('like_qty', models.IntegerField(default=0, verbose_name='تعداد پسندیدن')),
                 ('dislike_qty', models.IntegerField(default=0, verbose_name='تعداد نپسندیدن')),
                 ('creator', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
