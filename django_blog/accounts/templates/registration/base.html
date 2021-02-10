@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    {% block style %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+<header class="w-100 mx-auto my-5">
+    {% block header %}{% endblock %}
+</header>
+<main class="w-75 mx-auto my-5">
+    {% block body %}{% endblock %}
+</main>
+<footer class="w-100 mx-auto">
+    {% block footer %}{% endblock %}
+</footer>
+</body>
+
+</html>

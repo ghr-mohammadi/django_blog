@@ -25,6 +25,9 @@ class Category(models.Model):
     name = models.CharField(verbose_name='دسته‌بندی', max_length=80, unique=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name = 'دسته‌بندی'
         verbose_name_plural = 'دسته‌بندی‌ها'
