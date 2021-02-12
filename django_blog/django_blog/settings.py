@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants as messages
+
 from .local_settings import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -125,4 +127,13 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
+# LOGIN_REDIRECT_URL = '/blog/'
 # LOGOUT_REDIRECT_URL = '/blog/'
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'light',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger'
+}

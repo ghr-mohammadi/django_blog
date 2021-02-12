@@ -23,7 +23,7 @@ class BlogUser(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(verbose_name='دسته‌بندی', max_length=80, unique=True)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    parent = models.ForeignKey('self', verbose_name='زیر مجموعه', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -33,11 +33,22 @@ class Category(models.Model):
         verbose_name_plural = 'دسته‌بندی‌ها'
 
 
+class Tag(models.Model):
+    name = models.CharField(verbose_name='تگ', max_length=80)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "تگ"
+        verbose_name_plural = "تگ‌ها"
+
+
 class AbstractText(models.Model):
     accept_values = [(False, 'تایید نمی‌کنم'), (True, 'تایید می‌کنم')]
     active_values = [(False, 'غیرفعال'), (True, 'فعال')]
 
-    creator = models.ForeignKey(BlogUser, on_delete=models.CASCADE)
+    creator = models.ForeignKey(BlogUser, verbose_name='نویسنده', on_delete=models.CASCADE)
     text = models.TextField(verbose_name='متن')
     is_accepted = models.BooleanField(verbose_name='تایید کردن', choices=accept_values, default=accept_values[0][0])
     is_activated = models.BooleanField(verbose_name='وضعیت فعالیت', choices=active_values, default=active_values[0][0])
@@ -61,8 +72,8 @@ def post_user_path(instance, filename):
 
 class Post(AbstractText):
     title = models.CharField(verbose_name='عنوان', max_length=80)
-    category = models.ForeignKey(Category, on_delete=models.SET(get_patent))
-    tag = models.ManyToManyField('Tag', through='TagPost')
+    category = models.ForeignKey(Category, verbose_name='دسته‌بندی', on_delete=models.SET(get_patent))
+    tags = models.ManyToManyField(Tag, blank=True, verbose_name='تگ‌ها')
     image = models.ImageField(verbose_name='تصویر پست', upload_to=post_user_path, null=True, blank=True)
 
     class Meta:
@@ -76,24 +87,6 @@ class Comment(AbstractText):
     class Meta:
         verbose_name = "کامنت"
         verbose_name_plural = "کامنت‌ها"
-
-
-class Tag(models.Model):
-    name = models.CharField(verbose_name='تگ', max_length=80)
-
-    class Meta:
-        verbose_name = "تگ"
-        verbose_name_plural = "تگ‌ها"
-
-
-class TagPost(models.Model):
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, verbose_name='تگ')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='پست')
-
-    class Meta:
-        verbose_name = "تگ-پست"
-        verbose_name_plural = "تگ-پست‌ها"
-        unique_together = ("tag", "post")
 
 
 class Like(models.Model):

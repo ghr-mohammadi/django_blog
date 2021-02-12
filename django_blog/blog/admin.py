@@ -10,9 +10,13 @@ class BlogUserAdmin(UserAdmin):
     fieldsets[1][1]['fields'] += ('phone_number', 'position', 'image')
 
 
-admin.site.register(Post)
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    # readonly_fields = ['image', 'like_qty', 'dislike_qty']
+    filter_horizontal = ['tags']
+
+
 admin.site.register(Comment)
 admin.site.register(Tag)
-# admin.site.register(TagPost)
 admin.site.register(Like)
 admin.site.register(Category)

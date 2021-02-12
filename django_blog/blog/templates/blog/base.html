@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    {% load static %}
+    <link rel="icon" type="image/svg+xml" sizes="any" href="{% static 'icon/global.svg' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.rtl.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/fonts.css' %}">
+    {% block style %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid w-75">
+        <a class="navbar-brand" href="{% url 'home' %}">خانه</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">نویسندگان</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">برگزیده‌ها</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-md-none" href="#">دسته‌بندی</a>
+                </li>
+                <li class="nav-item d-md-none">
+                    <a class="nav-link" href="#">تگ‌ها</a>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="جست‌و‌جو" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">جست‌و‌جو</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="w-75 mx-auto mt-5 pt-3 row">
+        <nav id="sidebarMenu" class="d-none d-md-block col-md-4 sidebar collapse">
+            <div class="position-sticky">
+                <div class="p-3 border border-2 rounded-3 bg-light">
+                    <h5 class="sidebar-heading d-flex justify-content-between align-items-center text-muted">دسته‌بندی‌ها:</h5>
+                    <ul class="nav flex-column">
+                    {% for category in categories reversed %}
+                        <li class="nav-item">
+                            <a class="nav-link d-inline-block btn btn-outline-secondary border border-light" href="{% url 'category' category.name %}" data-bs-toggle="tooltip" title="{{ category.name }}">
+                                {{ category.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <div class="p-3 border border-2 rounded-3 mt-2 bg-light">
+                    <h5 class="sidebar-heading d-flex justify-content-between align-items-center text-muted">تگ‌ها:</h5>
+                    {% for tag in tags %}
+                            <a class="nav-link d-inline-block btn btn-outline-primary mb-1" href="#" data-bs-toggle="tooltip" title="{{ tag.name }}">
+                                {{ tag.name }}
+                            </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </nav>
+        <div class="col-12 col-md-8">
+            {% if messages %}
+            {% for message in messages %}
+            <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" {% endif %} role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% block body %}
+            <p>سلام</p>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+<footer class="w-100 mx-auto">
+    {% block footer %}{% endblock %}
+</footer>
+</body>
+{% block script %}
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+{% endblock %}
+</html>

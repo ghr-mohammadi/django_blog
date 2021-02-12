@@ -15,7 +15,7 @@ def signup(request):
             blog_user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
             blog_user.groups.add(Group.objects.get(name='ساده'))
             login(request=request, user=blog_user)
-            return HttpResponseRedirect(reverse('index'))
+            return HttpResponseRedirect(reverse('home'))
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
