@@ -121,14 +121,16 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static'
+    BASE_DIR / 'static',
+    BASE_DIR / 'blog/static',
+
 ]
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
 # LOGIN_REDIRECT_URL = '/blog/'
-# LOGOUT_REDIRECT_URL = '/blog/'
+LOGOUT_REDIRECT_URL = '/blog/'
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'light',

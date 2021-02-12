@@ -15,7 +15,7 @@ def home(request):
 
 
 def category(request, name):
-    parent = get_object_or_404(Category, name=name)
+    parent = get_object_or_404(Category, name=name) if name != 'None' else None
     categories = Category.objects.filter(parent=parent)
     tags = Tag.objects.all()
-    return render(request, 'blog/category.html', {'categories': categories, 'tags': tags})
+    return render(request, 'blog/category.html', {'parent': parent, 'categories': categories, 'tags': tags})
