@@ -34,7 +34,7 @@ class Category(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(verbose_name='تگ', max_length=80)
+    name = models.CharField(verbose_name='تگ', max_length=80, unique=True)
 
     def __str__(self):
         return self.name

@@ -1,15 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from .models import Category, Tag, Post
 
 
 def home(request):
-    messages.success(request, 'متن نمایشی جهت تست')
-    messages.info(request, 'متن نمایشی جهت تست')
     categories = Category.objects.filter(parent=None)
     tags = Tag.objects.all()
     posts = Post.objects.filter(is_accepted=True, is_activated=True)
@@ -22,17 +20,13 @@ def category(request, name):
     tags = Tag.objects.all()
 
     def get_branch(parent):
-        none = Category.objects.none()
-        plist = list(parent)
-        for par in plist:
+        deeper = Category.objects.none()
+        for par in list(parent):
             parent |= Category.objects.filter(parent=par)
-        none |= parent
+        deeper |= parent
         for par in parent:
-            none |= Category.objects.filter(parent=par)
-        if set(none) - set(parent):
-            return get_branch(parent)
-        else:
-            return parent
+            deeper |= Category.objects.filter(parent=par)
+        return get_branch(parent) if deeper.difference(parent) else parent
 
     if parent:
         branch = get_branch(Category.objects.filter(name=parent.name))
@@ -52,6 +46,16 @@ def tag(request, name):
     tags = Tag.objects.all()
     posts = Post.objects.filter(is_accepted=True, is_activated=True, tags=specific_tag)
     return render(request, 'blog/tag.html', {'categories': categories, 'tags': tags, 'posts': posts, 'specific_tag': specific_tag})
+
+
+def post(request, id):
+    post = get_object_or_404(Post, id=id)
+    if post.is_accepted and post.is_activated:
+        categories = Category.objects.filter(parent=None)
+        tags = Tag.objects.all()
+        return render(request, 'blog/post.html', {'categories': categories, 'tags': tags, 'post': post})
+    else:
+        return HttpResponseForbidden()
 
 
 def logout_view(request):
