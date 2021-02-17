@@ -78,7 +78,7 @@
                         {% endif %}
                         {% for category in categories reversed %}
                         <li class="nav-item">
-                            <a class="nav-link d-inline-block btn btn-outline-secondary border border-light" href="{% url 'blog:category' category.name %}" data-bs-toggle="tooltip" title="{{ category.name }}">
+                            <a class="nav-link d-inline-block btn btn-outline-secondary border border-light {% if category.name == post.category.name %}active{% endif %}" href="{% url 'blog:category' category.name %}" data-bs-toggle="tooltip" title="{{ category.name }}">
                                 {{ category.name }}
                             </a>
                         </li>
@@ -109,11 +109,15 @@
             {% load jalali %}
             {% for post in posts %}
             <div class="card mb-3">
-                {% if post.image %}
-                <div class="text-center bg-light">
-                    <img src="/media/{{ post.image }}" class="img-post">
-                </div>
-                {% endif %}
+                <a href="{% url 'blog:post' post.id %}">
+                    <div class="text-center bg-light">
+                        {% if post.image %}
+                        <img src="/media/{{ post.image }}" class="img-post">
+                        {% else %}
+                        <img src="{% static 'icon/No-image-available.jpg' %}" class="img-post">
+                        {% endif %}
+                    </div>
+                </a>
                 <div class="card-body">
                     <h5 class="card-title">{{ post.title | truncatechars:110 }}</h5>
                     <p class="card-text">{{ post.text | truncatechars:125 | linebreaks }}</p>

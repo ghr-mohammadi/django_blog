@@ -51,9 +51,10 @@ def tag(request, name):
 def post(request, id):
     post = get_object_or_404(Post, id=id)
     if post.is_accepted and post.is_activated:
-        categories = Category.objects.filter(parent=None)
+        parent = post.category.parent
+        categories = Category.objects.filter(parent=parent)
         tags = Tag.objects.all()
-        return render(request, 'blog/post.html', {'categories': categories, 'tags': tags, 'post': post})
+        return render(request, 'blog/post.html', {'parent': parent, 'categories': categories, 'tags': tags, 'post': post})
     else:
         return HttpResponseForbidden()
 
