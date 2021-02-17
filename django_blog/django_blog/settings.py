@@ -129,7 +129,7 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
-# LOGIN_REDIRECT_URL = '/blog/'
+LOGIN_REDIRECT_URL = '/blog/'
 LOGOUT_REDIRECT_URL = '/blog/'
 
 MESSAGE_TAGS = {

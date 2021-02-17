@@ -1,5 +1,8 @@
+psycopg2-binary
+psycopg2
 Django
 Pillow
 django-bootstrap4
 django-crispy-forms
 django-extensions
+persiantools

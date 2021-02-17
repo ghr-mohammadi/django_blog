@@ -1,5 +1,6 @@
 django_blog/django_blog/local_settings.py
 django_venv/
+django_python3.9_env/
 django_blog/media/post/user_*
 django_blog/media/profile/user_*
 __pycache__/

@@ -67,7 +67,7 @@ def get_patent(*args):
 
 
 def post_user_path(instance, filename):
-    return f'post/user_{instance.id}/{filename}'
+    return f'post/user_{instance.creator.id}/{filename}'
 
 
 class Post(AbstractText):
@@ -75,6 +75,9 @@ class Post(AbstractText):
     category = models.ForeignKey(Category, verbose_name='دسته‌بندی', on_delete=models.SET(get_patent))
     tags = models.ManyToManyField(Tag, blank=True, verbose_name='تگ‌ها')
     image = models.ImageField(verbose_name='تصویر پست', upload_to=post_user_path, null=True, blank=True)
+
+    def __str__(self):
+        return self.title
 
     class Meta:
         verbose_name = "پست"
@@ -91,8 +94,8 @@ class Comment(AbstractText):
 
 class Like(models.Model):
     values = [(0, 'null'), (1, 'like'), (-1, 'dislike')]
-    user = models.OneToOneField(BlogUser, on_delete=models.CASCADE, verbose_name='وبلاگ نویس')
-    post = models.OneToOneField(Post, on_delete=models.CASCADE, verbose_name='پست')
+    user = models.ForeignKey(BlogUser, on_delete=models.CASCADE, verbose_name='وبلاگ نویس')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='پست')
     value = models.IntegerField(verbose_name='مقدار', choices=values, default=values[0][0])
 
     class Meta:

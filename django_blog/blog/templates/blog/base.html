@@ -17,7 +17,7 @@
 
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <div class="container-fluid w-75">
-        <a class="navbar-brand" href="{% url 'home' %}">خانه</a>
+        <a class="navbar-brand" href="{% url 'blog:home' %}">خانه</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -38,32 +38,32 @@
             </ul>
             <form class="d-flex mx-5">
                 <input class="form-control me-2" type="search" placeholder="جست‌و‌جو" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">جست‌و‌جو</button>
+                <button class="btn btn-outline-light" type="submit">جست‌و‌جو</button>
             </form>
-            {% if user.is_authenticated %}
-            <div class="d-flex my-auto">
+            <div class="d-flex justify-content-end my-3 my-md-auto mx-5 mx-md-0">
+                {% if user.is_authenticated %}
                 {% if user.image %}
                 <img class="img-profile rounded-circle border border-light mx-2" src="/media/{{ user.image }}">
                 {% else %}
                 <img class="img-profile rounded-circle border border-light mx-2" src="/media/profile/user.jpg">
                 {% endif %}
                 <div class="btn-group rounded" role="group" aria-label="Basic outlined example">
-                    <a type="button" class="btn btn-outline-success border-end">{{ user.username }}</a>
-                    <a type="button" class="btn btn-outline-danger border-start">خروج</a>
+                    <a type="button" class="btn btn-outline-light border-end">{{ user.username }}</a>
+                    <a type="button" class="btn btn-outline-light border-start" href="{% url 'blog:logout' %}">خروج</a>
                 </div>
+                {% else %}
+                <div class="btn-group rounded" role="group" aria-label="Basic outlined example">
+                    <a type="button" class="btn btn-outline-light" href="{% url 'accounts:login' %}">ورود</a>
+                    <a type="button" class="btn btn-outline-light" href="{% url 'accounts:signup' %}">عضویت</a>
+                </div>
+                {% endif %}
             </div>
-            {% else %}
-            <div class="btn-group rounded" role="group" aria-label="Basic outlined example">
-                <a type="button" class="btn btn-outline-success">ورود</a>
-                <a type="button" class="btn btn-outline-success">عضویت</a>
-            </div>
-            {% endif %}
         </div>
     </div>
 </nav>
 
 <div class="container-fluid">
-    <div class="w-75 mx-auto mt-5 pt-3 row">
+    <div class="w-75 mx-auto mt-5 pt-4 row">
         <nav id="sidebarMenu" class="d-none d-md-block col-md-4 sidebar collapse">
             <div class="position-sticky">
                 <div class="p-3 border border-2 rounded-3 bg-light">
@@ -71,14 +71,14 @@
                     <ul class="nav flex-column">
                         {% if parent %}
                         <li class="nav-item">
-                            <a class="nav-link d-inline-block btn btn-outline-secondary border border-light" href="{% url 'category' parent.parent %}" data-bs-toggle="tooltip" title="{{ parent.name }}">
-                                بازگشت به دسته‌بندی {{ parent.name }}
+                            <a class="nav-link d-inline-block btn btn-outline-secondary border border-light" href="{% url 'blog:category' parent.parent %}" data-bs-toggle="tooltip" title="{{ parent.name }}">
+                                بازگشت به دسته‌بندی پدر
                             </a>
                         </li>
                         {% endif %}
                         {% for category in categories reversed %}
                         <li class="nav-item">
-                            <a class="nav-link d-inline-block btn btn-outline-secondary border border-light" href="{% url 'category' category.name %}" data-bs-toggle="tooltip" title="{{ category.name }}">
+                            <a class="nav-link d-inline-block btn btn-outline-secondary border border-light" href="{% url 'blog:category' category.name %}" data-bs-toggle="tooltip" title="{{ category.name }}">
                                 {{ category.name }}
                             </a>
                         </li>
@@ -88,7 +88,7 @@
                 <div class="p-3 border border-2 rounded-3 mt-2 bg-light">
                     <h5 class="sidebar-heading d-flex justify-content-between align-items-center text-muted">تگ‌ها:</h5>
                     {% for tag in tags %}
-                    <a class="nav-link d-inline-block btn btn-outline-primary mb-1" href="#" data-bs-toggle="tooltip" title="{{ tag.name }}">
+                    <a class="nav-link d-inline-block btn btn-outline-secondary mb-1" href="#" data-bs-toggle="tooltip" title="{{ tag.name }}">
                         {{ tag.name }}
                     </a>
                     {% endfor %}
@@ -106,9 +106,6 @@
             {% endif %}
 
             {% block body %}
-            <p>
-                سلام
-            </p>
             {% endblock %}
         </div>
     </div>
