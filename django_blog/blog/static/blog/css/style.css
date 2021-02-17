@@ -5,6 +5,13 @@ img.img-profile {
     object-position: center center;
 }
 
+img.img-like {
+    width: 25px;
+    height: 25px;
+    object-fit: cover;
+    object-position: center center;
+}
+
 img.img-post {
     max-width: 100%;
     max-height: 400px;

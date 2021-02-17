@@ -82,6 +82,7 @@ class Post(AbstractText):
     class Meta:
         verbose_name = "پست"
         verbose_name_plural = "پست‌ها"
+        ordering = ['-create_datetime']
 
 
 class Comment(AbstractText):
