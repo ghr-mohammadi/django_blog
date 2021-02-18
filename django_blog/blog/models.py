@@ -19,6 +19,7 @@ class BlogUser(AbstractUser):
     class Meta:
         verbose_name = 'وبلاگ نویس'
         verbose_name_plural = 'وبلاگ نویسان'
+        ordering = ['-date_joined']
 
 
 class Category(models.Model):
@@ -63,7 +64,7 @@ class AbstractText(models.Model):
 def get_patent(*args):
     for arg in args:
         print(f'{arg}: {type(arg)}')
-    return Category.objects.get(name="سایر", parent=None)
+    return Category.objects.get(name="سایر")
 
 
 def post_user_path(instance, filename):
@@ -88,6 +89,9 @@ class Post(AbstractText):
 class Comment(AbstractText):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='پست')
 
+    def __str__(self):
+        return self.post.title + ' ⟽ ' + self.text[:20] + '...'
+
     class Meta:
         verbose_name = "کامنت"
         verbose_name_plural = "کامنت‌ها"
@@ -96,10 +100,25 @@ class Comment(AbstractText):
 class Like(models.Model):
     values = [(0, 'null'), (1, 'like'), (-1, 'dislike')]
     user = models.ForeignKey(BlogUser, on_delete=models.CASCADE, verbose_name='وبلاگ نویس')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='پست')
     value = models.IntegerField(verbose_name='مقدار', choices=values, default=values[0][0])
 
     class Meta:
-        verbose_name = "لایک"
-        verbose_name_plural = "لایک‌ها"
+        abstract = True
+
+
+class PostLike(Like):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='پست‌لایک')
+
+    class Meta:
+        verbose_name = "پست‌لایک"
+        verbose_name_plural = "پست‌لایک‌ها"
         unique_together = ("user", "post")
+
+
+class CommentLike(Like):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, verbose_name='کامنت‌لایک')
+
+    class Meta:
+        verbose_name = "کامنت‌لایک"
+        verbose_name_plural = "کامنت‌لایک‌ها"
+        unique_together = ("user", "comment")

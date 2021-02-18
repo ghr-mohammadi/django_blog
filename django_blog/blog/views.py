@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-from .models import Category, Tag, Post
+from .models import Category, Tag, Post, Comment, BlogUser
 
 
 def home(request):
@@ -54,9 +54,18 @@ def post(request, id):
         parent = post.category.parent
         categories = Category.objects.filter(parent=parent)
         tags = Tag.objects.all()
-        return render(request, 'blog/post.html', {'parent': parent, 'categories': categories, 'tags': tags, 'post': post})
+        comments = Comment.objects.filter(post=post)
+        return render(request, 'blog/post.html', {'parent': parent, 'categories': categories, 'tags': tags, 'post': post, 'comments': comments})
     else:
         return HttpResponseForbidden()
+
+
+def posts_of(request, id):
+    blog_user = get_object_or_404(BlogUser, id=id)
+    categories = Category.objects.filter(parent=None)
+    tags = Tag.objects.all()
+    posts = Post.objects.filter(is_accepted=True, is_activated=True, creator=blog_user)
+    return render(request, 'blog/posts_of.html', {'categories': categories, 'tags': tags, 'posts': posts})
 
 
 def logout_view(request):

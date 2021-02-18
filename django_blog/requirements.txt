@@ -6,3 +6,4 @@ django-bootstrap4
 django-crispy-forms
 django-extensions
 persiantools
+djangorestframework

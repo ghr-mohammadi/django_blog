@@ -34,9 +34,11 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'accounts.apps.AccountsConfig',
-    "bootstrap4",
+    'api.apps.ApiConfig',
+    'bootstrap4',
     'crispy_forms',
     'django_extensions',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
