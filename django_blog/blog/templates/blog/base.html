@@ -36,8 +36,8 @@
                     <a class="nav-link" href="#">تگ‌ها</a>
                 </li>
             </ul>
-            <form class="d-flex mx-5">
-                <input class="form-control me-2" type="search" placeholder="جست‌و‌جو" aria-label="Search">
+            <form class="d-flex mx-5" action="{% url 'blog:search' %}" method="get">
+                <input name="input" class="form-control me-2" type="search" placeholder="جست‌و‌جو">
                 <button class="btn btn-outline-light" type="submit">جست‌و‌جو</button>
             </form>
             <div class="d-flex justify-content-end my-3 my-md-auto mx-5 mx-md-0">
@@ -47,12 +47,12 @@
                 {% else %}
                 <img class="img-profile rounded-circle border border-light mx-2" src="/media/profile/user.jpg">
                 {% endif %}
-                <div class="btn-group rounded" role="group" aria-label="Basic outlined example">
+                <div class="btn-group rounded" role="group">
                     <a type="button" class="btn btn-outline-light border-end">{{ user.username }}</a>
                     <a type="button" class="btn btn-outline-light border-start" href="{% url 'blog:logout' %}">خروج</a>
                 </div>
                 {% else %}
-                <div class="btn-group rounded" role="group" aria-label="Basic outlined example">
+                <div class="btn-group rounded" role="group">
                     <a type="button" class="btn btn-outline-light" href="{% url 'accounts:login' %}">ورود</a>
                     <a type="button" class="btn btn-outline-light" href="{% url 'accounts:signup' %}">عضویت</a>
                 </div>
@@ -100,7 +100,7 @@
             {% for message in messages %}
             <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" {% endif %} role="alert">
                 {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             {% endfor %}
             {% endif %}
@@ -130,25 +130,60 @@
                     <div class="d-flex justify-content-between">
                         <small class="text-muted my-auto">
                             نوشته شده توسط:
-                            <a class="btn-outline-secondary text-decoration-none p-2 rounded" href="{% url 'blog:posts_of' post.creator.id %}">{{ post.creator.username }}</a>
+                            <a class="btn-outline-secondary text-decoration-none p-2 rounded" href="{% url 'blog:posts_of' post.creator.username %}">{{ post.creator.username }}</a>
                             {{ post.create_datetime | to_jalali }}
                         </small>
-                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example">
-                            <a class="btn btn-outline-success" href="#">
+                        {% if user.is_authenticated %}
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a class="btn btn-outline-success opinion" id="like post {{ post.id }}">
                                 <img src="{% static 'icon/like.svg' %}" class="img-like">
                                 <span class="badge bg-light text-dark">{{ post.like_qty }}</span>
                             </a>
-                            <a class="btn btn-outline-danger border-start" href="#">
+                            <a class="btn btn-outline-danger border-start opinion" id="dislike post {{ post.id }}">
                                 <img src="{% static 'icon/dislike.svg' %}" class="img-like">
                                 <span class="badge bg-light text-dark">{{ post.dislike_qty }}</span>
                             </a>
                         </div>
+                        {% else %}
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                                <img src="{% static 'icon/like.svg' %}" class="img-like">
+                                <span class="badge bg-light text-dark">{{ post.like_qty }}</span>
+                            </a>
+                            <a class="btn btn-outline-danger border-start" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                                <img src="{% static 'icon/dislike.svg' %}" class="img-like">
+                                <span class="badge bg-light text-dark">{{ post.dislike_qty }}</span>
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
             {% endfor %}
-            {% csrf_token %}
             {% endblock %}
+
+            {% csrf_token %}
+            {% if not user.is_authenticated %}
+            <div class="modal fade" id="enter-popup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light bg-gradient">
+                            <h5 class="modal-title" id="staticBackdropLabel">عضویت در سایت</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            برای ثبت پسندیدن و یا نپسندیدن یک مطلب بایستی در عضو سایت شده و یا به حساب کاربری خود وارد شوید.
+                        </div>
+                        <div class="modal-footer bg-light bg-gradient">
+                            <div class="btn-group rounded" role="group">
+                                <a type="button" class="btn btn-outline-secondary" href="{% url 'accounts:login' %}">ورود</a>
+                                <a type="button" class="btn btn-outline-secondary" href="{% url 'accounts:signup' %}">عضویت</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
 
         </div>
     </div>

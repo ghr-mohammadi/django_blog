@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.db.models.expressions import RawSQL
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
@@ -60,12 +61,20 @@ def post(request, id):
         return HttpResponseForbidden()
 
 
-def posts_of(request, id):
-    blog_user = get_object_or_404(BlogUser, id=id)
+def posts_of(request, username):
+    blog_user = get_object_or_404(BlogUser, username=username)
     categories = Category.objects.filter(parent=None)
     tags = Tag.objects.all()
     posts = Post.objects.filter(is_accepted=True, is_activated=True, creator=blog_user)
     return render(request, 'blog/posts_of.html', {'categories': categories, 'tags': tags, 'posts': posts})
+
+
+def search(request):
+    name = '%' + request.GET.get('input') + '%'
+    categories = Category.objects.raw('select * from blog_category where name ilike %s;', [name])
+    tags = Tag.objects.raw('select * from blog_tag where name ilike %s;', [name])
+    posts = Post.objects.raw('select * from blog_post where text ilike %s or title ilike %s;', [name, name])
+    return render(request, 'blog/search.html', {'categories': categories, 'tags': tags, 'posts': posts})
 
 
 def logout_view(request):

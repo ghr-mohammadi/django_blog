@@ -28,16 +28,29 @@
                 <a class="btn-outline-secondary text-decoration-none p-2 rounded" href="{% url 'blog:posts_of' post.creator.id %}">{{ post.creator.username }}</a>
                 {{ post.create_datetime | to_jalali }}
             </small>
-            <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example">
-                <a class="btn btn-outline-success" href="#">
+            {% if user.is_authenticated %}
+            <div class="btn-group btn-group-sm" role="group">
+                <a class="btn btn-outline-success opinion" id="like post {{ post.id }}">
                     <img src="{% static 'icon/like.svg' %}" class="img-like">
                     <span class="badge bg-light text-dark">{{ post.like_qty }}</span>
                 </a>
-                <a class="btn btn-outline-danger border-start" href="#">
+                <a class="btn btn-outline-danger border-start opinion" id="dislike post {{ post.id }}">
                     <img src="{% static 'icon/dislike.svg' %}" class="img-like">
                     <span class="badge bg-light text-dark">{{ post.dislike_qty }}</span>
                 </a>
             </div>
+            {% else %}
+            <div class="btn-group btn-group-sm" role="group">
+                <a class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                    <img src="{% static 'icon/like.svg' %}" class="img-like">
+                    <span class="badge bg-light text-dark">{{ post.like_qty }}</span>
+                </a>
+                <a class="btn btn-outline-danger border-start" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                    <img src="{% static 'icon/dislike.svg' %}" class="img-like">
+                    <span class="badge bg-light text-dark">{{ post.dislike_qty }}</span>
+                </a>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -50,19 +63,32 @@
             <div class="d-flex justify-content-between">
                 <small class="text-muted my-auto">
                     نوشته شده توسط:
-                    <a class="btn-outline-secondary text-decoration-none p-2 rounded" href="{% url 'blog:posts_of' comment.creator.id %}">{{ comment.creator.username }}</a>
+                    <a class="btn-outline-secondary text-decoration-none p-2 rounded" href="{% url 'blog:posts_of' comment.creator.username %}">{{ comment.creator.username }}</a>
                     {{ comment.create_datetime | to_jalali }}
                 </small>
-                <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example">
-                    <a class="btn btn-outline-success" href="#">
+                {% if user.is_authenticated %}
+                <div class="btn-group btn-group-sm" role="group">
+                    <a class="btn btn-outline-success opinion" id="like comment {{ comment.id }}">
                         <img src="{% static 'icon/like.svg' %}" class="img-like">
                         <span class="badge bg-light text-dark">{{ comment.like_qty }}</span>
                     </a>
-                    <a class="btn btn-outline-danger border-start" href="#">
+                    <a class="btn btn-outline-danger border-start opinion" id="dislike comment {{ comment.id }}">
                         <img src="{% static 'icon/dislike.svg' %}" class="img-like">
                         <span class="badge bg-light text-dark">{{ comment.dislike_qty }}</span>
                     </a>
                 </div>
+                {% else %}
+                <div class="btn-group btn-group-sm" role="group">
+                    <a class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                        <img src="{% static 'icon/like.svg' %}" class="img-like">
+                        <span class="badge bg-light text-dark">{{ comment.like_qty }}</span>
+                    </a>
+                    <a class="btn btn-outline-danger border-start" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                        <img src="{% static 'icon/dislike.svg' %}" class="img-like">
+                        <span class="badge bg-light text-dark">{{ comment.dislike_qty }}</span>
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

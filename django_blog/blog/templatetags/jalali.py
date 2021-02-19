@@ -5,7 +5,7 @@ register = template.Library()
 
 
 @register.filter
-def to_jalali(value, arg='%A %d %B %Y - %H:%M'):
+def to_jalali(value, arg='%A - %d %B %Y - %H:%M'):
     month_map = {
         "Farvardin": "فروردین",
         "Ordibehesht": "اردیبهشت",
