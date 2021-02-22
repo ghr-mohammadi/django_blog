@@ -135,7 +135,7 @@
                             {{ post.create_datetime | to_jalali }}
                         </small>
                         {% if user.is_authenticated %}
-                        <div class="btn-group btn-group-sm" role="group">
+                        <div class="btn-group btn-group-sm parent" role="group">
                             <button class="btn btn-outline-success opinion{{ user | post_like:post }}" id="like post {{ post.id }}" href="">
                                 <img src="{% static 'icon/like.svg' %}" class="img-like">
                                 <span class="badge bg-light text-dark">{{ post.like_qty }}</span>

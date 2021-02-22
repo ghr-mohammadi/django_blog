@@ -41,7 +41,8 @@ def opinion(request):
                 else:
                     instance.dislike_qty = F('dislike_qty') - 1
                 instance.save()
-                return Response(data={'name': 'reza'}, status=status.HTTP_200_OK)
+                instance.refresh_from_db()
+                return Response(data={'delete': 'delete', 'like': instance.like_qty, 'dislike': instance.dislike_qty}, status=status.HTTP_200_OK)
             else:
                 instance_like.value = user_opinion
                 instance_like.save()
@@ -52,7 +53,8 @@ def opinion(request):
                     instance.like_qty = F('like_qty') - 1
                     instance.dislike_qty = F('dislike_qty') + 1
                 instance.save()
-                return Response(data={'name': 'ali'}, status=status.HTTP_200_OK)
+                instance.refresh_from_db()
+                return Response(data={'update': 'update', 'like': instance.like_qty, 'dislike': instance.dislike_qty}, status=status.HTTP_200_OK)
         except model_like.DoesNotExist:
             instance_like = model_like.objects.create(user=user, instance=instance, value=user_opinion)
             if user_opinion:
@@ -60,6 +62,7 @@ def opinion(request):
             else:
                 instance.dislike_qty = F('dislike_qty') + 1
             instance.save()
-            return Response(data={'name': 'gholamreza'}, status=status.HTTP_200_OK)
+            instance.refresh_from_db()
+            return Response(data={'create': 'create', 'like': instance.like_qty, 'dislike': instance.dislike_qty}, status=status.HTTP_200_OK)
 
     return Response(status=status.HTTP_400_BAD_REQUEST)
