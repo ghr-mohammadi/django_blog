@@ -4,6 +4,7 @@
 
 {% block body %}
 {% load jalali %}
+{% load opinion %}
 {% load static %}
 <div class="card mb-3">
     <div class="text-center bg-light">
@@ -30,25 +31,25 @@
             </small>
             {% if user.is_authenticated %}
             <div class="btn-group btn-group-sm" role="group">
-                <a class="btn btn-outline-success opinion" id="like post {{ post.id }}">
+                <button class="btn btn-outline-success opinion{{ user | post_like:post }}" id="like post {{ post.id }}" href="">
                     <img src="{% static 'icon/like.svg' %}" class="img-like">
                     <span class="badge bg-light text-dark">{{ post.like_qty }}</span>
-                </a>
-                <a class="btn btn-outline-danger border-start opinion" id="dislike post {{ post.id }}">
+                </button>
+                <button class="btn btn-outline-danger border-start opinion{{ user | post_dislike:post }}" id="dislike post {{ post.id }}" href="">
                     <img src="{% static 'icon/dislike.svg' %}" class="img-like">
                     <span class="badge bg-light text-dark">{{ post.dislike_qty }}</span>
-                </a>
+                </button>
             </div>
             {% else %}
             <div class="btn-group btn-group-sm" role="group">
-                <a class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#enter-popup">
                     <img src="{% static 'icon/like.svg' %}" class="img-like">
                     <span class="badge bg-light text-dark">{{ post.like_qty }}</span>
-                </a>
-                <a class="btn btn-outline-danger border-start" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                </button>
+                <button class="btn btn-outline-danger border-start" data-bs-toggle="modal" data-bs-target="#enter-popup">
                     <img src="{% static 'icon/dislike.svg' %}" class="img-like">
                     <span class="badge bg-light text-dark">{{ post.dislike_qty }}</span>
-                </a>
+                </button>
             </div>
             {% endif %}
         </div>
@@ -68,25 +69,25 @@
                 </small>
                 {% if user.is_authenticated %}
                 <div class="btn-group btn-group-sm" role="group">
-                    <a class="btn btn-outline-success opinion" id="like comment {{ comment.id }}">
+                    <button class="btn btn-outline-success opinion{{ user | comment_like:comment }}" id="like comment {{ comment.id }}" href="">
                         <img src="{% static 'icon/like.svg' %}" class="img-like">
                         <span class="badge bg-light text-dark">{{ comment.like_qty }}</span>
-                    </a>
-                    <a class="btn btn-outline-danger border-start opinion" id="dislike comment {{ comment.id }}">
+                    </button>
+                    <button class="btn btn-outline-danger border-start opinion{{ user | comment_dislike:comment }}" id="dislike comment {{ comment.id }}" href="">
                         <img src="{% static 'icon/dislike.svg' %}" class="img-like">
                         <span class="badge bg-light text-dark">{{ comment.dislike_qty }}</span>
-                    </a>
+                    </button>
                 </div>
                 {% else %}
                 <div class="btn-group btn-group-sm" role="group">
-                    <a class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#enter-popup">
                         <img src="{% static 'icon/like.svg' %}" class="img-like">
                         <span class="badge bg-light text-dark">{{ comment.like_qty }}</span>
-                    </a>
-                    <a class="btn btn-outline-danger border-start" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                    </button>
+                    <button class="btn btn-outline-danger border-start" data-bs-toggle="modal" data-bs-target="#enter-popup">
                         <img src="{% static 'icon/dislike.svg' %}" class="img-like">
                         <span class="badge bg-light text-dark">{{ comment.dislike_qty }}</span>
-                    </a>
+                    </button>
                 </div>
                 {% endif %}
             </div>

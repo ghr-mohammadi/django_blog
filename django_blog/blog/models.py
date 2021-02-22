@@ -98,27 +98,27 @@ class Comment(AbstractText):
 
 
 class Like(models.Model):
-    values = [(0, 'null'), (1, 'like'), (-1, 'dislike')]
+    values = [(True, 'like'), (False, 'dislike')]
     user = models.ForeignKey(BlogUser, on_delete=models.CASCADE, verbose_name='وبلاگ نویس')
-    value = models.IntegerField(verbose_name='مقدار', choices=values, default=values[0][0])
+    value = models.BooleanField(verbose_name='مقدار', choices=values, default=values[0][0])
 
     class Meta:
         abstract = True
 
 
 class PostLike(Like):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='پست‌لایک')
+    instance = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='پست')
 
     class Meta:
         verbose_name = "پست‌لایک"
         verbose_name_plural = "پست‌لایک‌ها"
-        unique_together = ("user", "post")
+        unique_together = ("user", "instance")
 
 
 class CommentLike(Like):
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, verbose_name='کامنت‌لایک')
+    instance = models.ForeignKey(Comment, on_delete=models.CASCADE, verbose_name='کامنت')
 
     class Meta:
         verbose_name = "کامنت‌لایک"
         verbose_name_plural = "کامنت‌لایک‌ها"
-        unique_together = ("user", "comment")
+        unique_together = ("user", "instance")

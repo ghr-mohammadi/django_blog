@@ -1,9 +1,8 @@
 from rest_framework import serializers
 
-from blog.models import BlogUser
 
-
-class BlogUserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = BlogUser
-        fields = ['username', 'first_name', 'last_name', 'email']
+class CustomLikeSerializer(serializers.Serializer):
+    csrfmiddlewaretoken = serializers.CharField(max_length=64)
+    opinion = serializers.ChoiceField(choices=['like', 'dislike'])
+    kind = serializers.ChoiceField(choices=['post', 'comment'])
+    id = serializers.IntegerField()

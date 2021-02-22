@@ -12,11 +12,22 @@ class BlogUserAdmin(UserAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    # readonly_fields = ['image', 'like_qty', 'dislike_qty']
+    readonly_fields = ['like_qty', 'dislike_qty']
     filter_horizontal = ['tags']
+
+
+@admin.register(PostLike)
+class PostLikeAdmin(admin.ModelAdmin):
+    readonly_fields = ['user', 'value', 'instance']
+
+
+@admin.register(CommentLike)
+class CommentLikeAdmin(admin.ModelAdmin):
+    readonly_fields = ['user', 'value', 'instance']
 
 
 admin.site.register(Comment)
 admin.site.register(Tag)
-# admin.site.register(Like)
 admin.site.register(Category)
+# admin.site.register(PostLike)
+# admin.site.register(CommentLike)

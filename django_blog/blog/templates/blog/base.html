@@ -107,6 +107,7 @@
 
             {% block body %}
             {% load jalali %}
+            {% load opinion %}
             {% for post in posts %}
             <div class="card mb-3">
                 <a href="{% url 'blog:post' post.id %}">
@@ -135,25 +136,25 @@
                         </small>
                         {% if user.is_authenticated %}
                         <div class="btn-group btn-group-sm" role="group">
-                            <a class="btn btn-outline-success opinion" id="like post {{ post.id }}">
+                            <button class="btn btn-outline-success opinion{{ user | post_like:post }}" id="like post {{ post.id }}" href="">
                                 <img src="{% static 'icon/like.svg' %}" class="img-like">
                                 <span class="badge bg-light text-dark">{{ post.like_qty }}</span>
-                            </a>
-                            <a class="btn btn-outline-danger border-start opinion" id="dislike post {{ post.id }}">
+                            </button>
+                            <button class="btn btn-outline-danger border-start opinion{{ user | post_dislike:post }}" id="dislike post {{ post.id }}" href="">
                                 <img src="{% static 'icon/dislike.svg' %}" class="img-like">
                                 <span class="badge bg-light text-dark">{{ post.dislike_qty }}</span>
-                            </a>
+                            </button>
                         </div>
                         {% else %}
                         <div class="btn-group btn-group-sm" role="group">
-                            <a class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                            <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#enter-popup">
                                 <img src="{% static 'icon/like.svg' %}" class="img-like">
                                 <span class="badge bg-light text-dark">{{ post.like_qty }}</span>
-                            </a>
-                            <a class="btn btn-outline-danger border-start" data-bs-toggle="modal" data-bs-target="#enter-popup">
+                            </button>
+                            <button class="btn btn-outline-danger border-start" data-bs-toggle="modal" data-bs-target="#enter-popup">
                                 <img src="{% static 'icon/dislike.svg' %}" class="img-like">
                                 <span class="badge bg-light text-dark">{{ post.dislike_qty }}</span>
-                            </a>
+                            </button>
                         </div>
                         {% endif %}
                     </div>
@@ -162,8 +163,9 @@
             {% endfor %}
             {% endblock %}
 
-            {% csrf_token %}
-            {% if not user.is_authenticated %}
+            {% if user.is_authenticated %}
+                {% csrf_token %}
+            {% else %}
             <div class="modal fade" id="enter-popup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -188,11 +190,13 @@
         </div>
     </div>
 </div>
-<footer class="w-100 mx-auto">
-    {% block footer %}{% endblock %}
-</footer>
+<footer class="w-100 mx-auto"></footer>
 </body>
 {% block script %}
 <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
 {% endblock %}
+{% if user.is_authenticated %}
+<script type="text/javascript" src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'blog/js/script.js' %}"></script>
+{% endif %}
 </html>
