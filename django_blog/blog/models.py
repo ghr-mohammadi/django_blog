@@ -8,13 +8,10 @@ def profile_user_path(instance, filename):
 
 
 class BlogUser(AbstractUser):
-    positions = [('normal', 'ساده'), ('writer', 'نویسنده'), ('editor', 'ویراستار'), ('manager', 'مدیر')]
-
     phone_number = models.CharField(verbose_name='شماره تلفن', validators=[RegexValidator(regex='0[1-9][0-9]{9}', message='شماره تلفن وارد کنید')], max_length=11, blank=True)
-    position = models.CharField(verbose_name='رده کاربر', max_length=8, choices=positions, default=positions[0][0], blank=True)
     image = models.ImageField(verbose_name='تصویر پروفایل', upload_to=profile_user_path, blank=True)
 
-    REQUIRED_FIELDS = AbstractUser.REQUIRED_FIELDS + ['first_name', 'last_name', 'phone_number', 'position', 'image']
+    REQUIRED_FIELDS = AbstractUser.REQUIRED_FIELDS + ['first_name', 'last_name', 'phone_number', 'image']
 
     class Meta:
         verbose_name = 'وبلاگ نویس'
