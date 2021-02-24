@@ -5,6 +5,8 @@ from django.db.models.expressions import RawSQL
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
+from django.views.decorators.http import require_http_methods
+from .forms import CommentForm
 from .models import Category, Tag, Post, Comment, BlogUser
 
 
@@ -62,16 +64,35 @@ def tags(request):
     return render(request, 'blog/tags.html', {'tags': tags, 'posts': posts})
 
 
+@require_http_methods(["GET", "POST"])
 def post(request, id):
     post = get_object_or_404(Post, id=id)
-    if post.is_accepted and post.is_activated:
+    if not post.is_accepted or not post.is_activated:
+        return HttpResponseForbidden()
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            messages.warning(request, 'برای ثبت نظر باید با حساب کاربری وارد شوید.')
+            return HttpResponseRedirect(reverse('blog:post', args=[id]))
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            Comment.objects.create(creator=request.user, text=form.cleaned_data['text'], is_activated=True, post=post)
+            messages.info(request, 'نظر شما با موفقیت ثبت شد. پس از تایید نهایی نظر شما در سایت قرار می‌گیرد.')
+            return HttpResponseRedirect(reverse('blog:post', args=[id]))
+    else:
         parent = post.category.parent
         categories = Category.objects.filter(parent=parent)
         tags = Tag.objects.all()
-        comments = Comment.objects.filter(post=post)
-        return render(request, 'blog/post.html', {'parent': parent, 'categories': categories, 'tags': tags, 'post': post, 'comments': comments})
-    else:
-        return HttpResponseForbidden()
+        comments = Comment.objects.filter(is_accepted=True, post=post)
+        form = CommentForm()
+        context = {
+            'parent': parent,
+            'categories': categories,
+            'tags': tags,
+            'post': post,
+            'comments': comments,
+            'form': form
+        }
+        return render(request, 'blog/post.html', context)
 
 
 def posts_of(request, username):

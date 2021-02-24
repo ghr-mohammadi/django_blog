@@ -162,32 +162,32 @@
             </div>
             {% endfor %}
 
-            {% if user.is_authenticated %}
-            {% csrf_token %}
-            {% else %}
-            <div class="modal fade" id="enter-popup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header bg-light bg-gradient">
-                            <h5 class="modal-title" id="staticBackdropLabel">عضویت در سایت</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            برای ثبت پسندیدن و یا نپسندیدن یک مطلب بایستی در عضو سایت شده و یا به حساب کاربری خود وارد شوید.
-                        </div>
-                        <div class="modal-footer bg-light bg-gradient">
-                            <div class="btn-group rounded" role="group">
-                                <a type="button" class="btn btn-outline-secondary" href="{% url 'accounts:login' %}">ورود</a>
-                                <a type="button" class="btn btn-outline-secondary" href="{% url 'accounts:signup' %}">عضویت</a>
-                            </div>
+        </div>
+        {% endblock %}
+
+        {% if user.is_authenticated %}
+        {% csrf_token %}
+        {% else %}
+        <div class="modal fade" id="enter-popup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-light bg-gradient">
+                        <h5 class="modal-title" id="staticBackdropLabel">عضویت در سایت</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        برای ثبت پسندیدن و یا نپسندیدن یک مطلب بایستی در عضو سایت شده و یا به حساب کاربری خود وارد شوید.
+                    </div>
+                    <div class="modal-footer bg-light bg-gradient">
+                        <div class="btn-group rounded" role="group">
+                            <a type="button" class="btn btn-outline-secondary" href="{% url 'accounts:login' %}">ورود</a>
+                            <a type="button" class="btn btn-outline-secondary" href="{% url 'accounts:signup' %}">عضویت</a>
                         </div>
                     </div>
                 </div>
             </div>
-            {% endif %}
-
         </div>
-        {% endblock %}
+        {% endif %}
 
     </div>
 </div>

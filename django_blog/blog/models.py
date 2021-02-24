@@ -95,6 +95,7 @@ class Comment(AbstractText):
     class Meta:
         verbose_name = "کامنت"
         verbose_name_plural = "کامنت‌ها"
+        ordering = ['create_datetime']
 
 
 class Like(models.Model):
