@@ -1,5 +1,5 @@
 from django import template
-from ..models import PostLike, CommentLike
+from blog.models import PostLike, CommentLike
 
 register = template.Library()
 

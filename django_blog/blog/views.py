@@ -41,12 +41,25 @@ def category(request, name):
     return render(request, 'blog/category.html', {'parent': parent, 'categories': categories, 'tags': tags, 'posts': posts})
 
 
+def categories(request):
+    categories = Category.objects.filter(parent=None)
+    tags = Tag.objects.all()
+    posts = Post.objects.filter(is_accepted=True, is_activated=True)
+    return render(request, 'blog/categories.html', {'categories': categories, 'tags': tags, 'posts': posts})
+
+
 def tag(request, name):
     specific_tag = get_object_or_404(Tag, name=name)
     categories = Category.objects.filter(parent=None)
     tags = Tag.objects.all()
     posts = Post.objects.filter(is_accepted=True, is_activated=True, tags=specific_tag)
     return render(request, 'blog/tag.html', {'categories': categories, 'tags': tags, 'posts': posts, 'specific_tag': specific_tag})
+
+
+def tags(request):
+    tags = Tag.objects.all()
+    posts = Post.objects.filter(is_accepted=True, is_activated=True)
+    return render(request, 'blog/tags.html', {'tags': tags, 'posts': posts})
 
 
 def post(request, id):
@@ -75,6 +88,13 @@ def search(request):
     tags = Tag.objects.raw('select * from blog_tag where name ilike %s;', [name])
     posts = Post.objects.raw('select * from blog_post where text ilike %s or title ilike %s;', [name, name])
     return render(request, 'blog/search.html', {'categories': categories, 'tags': tags, 'posts': posts})
+
+
+def bests(request):
+    categories = Category.objects.filter(parent=None)
+    tags = Tag.objects.all()
+    posts = Post.objects.filter(is_accepted=True, is_activated=True).order_by('-like_qty', 'dislike_qty')
+    return render(request, 'blog/bests.html', {'categories': categories, 'tags': tags, 'posts': posts})
 
 
 def logout_view(request):

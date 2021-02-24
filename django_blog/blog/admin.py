@@ -16,14 +16,14 @@ class PostAdmin(admin.ModelAdmin):
     filter_horizontal = ['tags']
 
 
-@admin.register(PostLike)
-class PostLikeAdmin(admin.ModelAdmin):
-    readonly_fields = ['user', 'value', 'instance']
-
-
-@admin.register(CommentLike)
-class CommentLikeAdmin(admin.ModelAdmin):
-    readonly_fields = ['user', 'value', 'instance']
+# @admin.register(PostLike)
+# class PostLikeAdmin(admin.ModelAdmin):
+#     readonly_fields = ['user', 'value', 'instance']
+#
+#
+# @admin.register(CommentLike)
+# class CommentLikeAdmin(admin.ModelAdmin):
+#     readonly_fields = ['user', 'value', 'instance']
 
 
 admin.site.register(Comment)

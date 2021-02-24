@@ -1,0 +1,16 @@
+{% load treeviewcategories %}
+
+<li class="nav-item">
+    <a class="nav-link d-inline-block btn btn-outline-secondary border border-light" href="{% url 'blog:category' category.name %}" data-bs-toggle="tooltip" title="{{ category.name }}">
+        {% if category.parent %} {{ category.name }} {% else %} <span class="fw-bold">{{ category.name }}</span> {% endif %}
+    </a>
+    {% if category|has_childs %}
+    <ul class="ps-3" style="list-style-type: none;">
+        {% for ch in category|all_childs %}
+            {% with category=ch template_name="blog/tree_view_categories.html" %}
+                {% include template_name %}
+            {% endwith %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>

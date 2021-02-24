@@ -72,7 +72,7 @@ def post_user_path(instance, filename):
 
 
 class Post(AbstractText):
-    title = models.CharField(verbose_name='عنوان', max_length=80)
+    title = models.CharField(verbose_name='عنوان', max_length=250)
     category = models.ForeignKey(Category, verbose_name='دسته‌بندی', on_delete=models.SET(get_patent))
     tags = models.ManyToManyField(Tag, blank=True, verbose_name='تگ‌ها')
     image = models.ImageField(verbose_name='تصویر پست', upload_to=post_user_path, null=True, blank=True)
