@@ -26,6 +26,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'blog:bests' %}">برگزیده‌ها</a>
                 </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'blog:my_works' %}">نوشته‌های من</a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link d-md-none" href="{% url 'blog:categories' %}">دسته‌بندی</a>
                 </li>
@@ -191,7 +196,7 @@
 
     </div>
 </div>
-<footer class="w-100 mx-auto"></footer>
+<footer class="w-100 mx-auto" style="height: 10em;"></footer>
 </body>
 {% block script %}
 <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>

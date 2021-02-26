@@ -1,6 +1,10 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
+from django.db import models
+
+
+# from django.db.models.signals import pre_delete
+# from django.dispatch import receiver
 
 
 def profile_user_path(instance, filename):
@@ -19,9 +23,35 @@ class BlogUser(AbstractUser):
         ordering = ['-date_joined']
 
 
+class AbstractText(models.Model):
+    accept_values = [(False, 'تایید نمی‌کنم'), (True, 'تایید می‌کنم')]
+    active_values = [(False, 'غیرفعال'), (True, 'فعال')]
+
+    creator = models.ForeignKey(BlogUser, verbose_name='نویسنده', on_delete=models.CASCADE)
+    text = models.TextField(verbose_name='متن')
+    is_accepted = models.BooleanField(verbose_name='تایید کردن', choices=accept_values, default=accept_values[0][0])
+    is_activated = models.BooleanField(verbose_name='وضعیت فعالیت', choices=active_values, default=active_values[0][0])
+    create_datetime = models.DateTimeField(verbose_name='زمان ایجاد', auto_now_add=True)
+    like_qty = models.IntegerField(verbose_name='تعداد پسندیدن', default=0)
+    dislike_qty = models.IntegerField(verbose_name='تعداد نپسندیدن', default=0)
+
+    class Meta:
+        abstract = True
+
+
 class Category(models.Model):
     name = models.CharField(verbose_name='دسته‌بندی', max_length=80, unique=True)
     parent = models.ForeignKey('self', verbose_name='زیر مجموعه', on_delete=models.CASCADE, null=True, blank=True)
+
+    # def delete(self, *args, **kwargs):
+    #     if self.parent:
+    #         for post in Post.objects.filter(category=self):
+    #             post.category = self.parent
+    #             post.save()
+    #     else:
+    #         for post in Post.objects.filter(category=self):
+    #             post.delete()
+    #     super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -42,26 +72,8 @@ class Tag(models.Model):
         verbose_name_plural = "تگ‌ها"
 
 
-class AbstractText(models.Model):
-    accept_values = [(False, 'تایید نمی‌کنم'), (True, 'تایید می‌کنم')]
-    active_values = [(False, 'غیرفعال'), (True, 'فعال')]
-
-    creator = models.ForeignKey(BlogUser, verbose_name='نویسنده', on_delete=models.CASCADE)
-    text = models.TextField(verbose_name='متن')
-    is_accepted = models.BooleanField(verbose_name='تایید کردن', choices=accept_values, default=accept_values[0][0])
-    is_activated = models.BooleanField(verbose_name='وضعیت فعالیت', choices=active_values, default=active_values[0][0])
-    create_datetime = models.DateTimeField(verbose_name='زمان ایجاد', auto_now_add=True)
-    like_qty = models.IntegerField(verbose_name='تعداد پسندیدن', default=0)
-    dislike_qty = models.IntegerField(verbose_name='تعداد نپسندیدن', default=0)
-
-    class Meta:
-        abstract = True
-
-
-def get_patent(*args):
-    for arg in args:
-        print(f'{arg}: {type(arg)}')
-    return Category.objects.get(name="سایر")
+def get_patent(*args, **kwargs):
+    pass
 
 
 def post_user_path(instance, filename):
@@ -70,7 +82,7 @@ def post_user_path(instance, filename):
 
 class Post(AbstractText):
     title = models.CharField(verbose_name='عنوان', max_length=250)
-    category = models.ForeignKey(Category, verbose_name='دسته‌بندی', on_delete=models.SET(get_patent))
+    category = models.ForeignKey(Category, verbose_name='دسته‌بندی', on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag, blank=True, verbose_name='تگ‌ها')
     image = models.ImageField(verbose_name='تصویر پست', upload_to=post_user_path, null=True, blank=True)
 
@@ -85,9 +97,6 @@ class Post(AbstractText):
 
 class Comment(AbstractText):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='پست')
-
-    def __str__(self):
-        return self.post.title + ' ⟽ ' + self.text[:20] + '...'
 
     class Meta:
         verbose_name = "کامنت"

@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from .forms import CommentForm
+from .forms import SimpleCommentForm
 from .models import Category, Tag, Post, Comment, BlogUser
 
 
@@ -73,7 +73,7 @@ def post(request, id):
         if not request.user.is_authenticated:
             messages.warning(request, 'برای ثبت نظر باید با حساب کاربری وارد شوید.')
             return HttpResponseRedirect(reverse('blog:post', args=[id]))
-        form = CommentForm(request.POST)
+        form = SimpleCommentForm(request.POST)
         if form.is_valid():
             Comment.objects.create(creator=request.user, text=form.cleaned_data['text'], is_activated=True, post=post)
             messages.info(request, 'نظر شما با موفقیت ثبت شد. پس از تایید نهایی نظر شما در سایت قرار می‌گیرد.')
@@ -82,8 +82,8 @@ def post(request, id):
         parent = post.category.parent
         categories = Category.objects.filter(parent=parent)
         tags = Tag.objects.all()
-        comments = Comment.objects.filter(is_accepted=True, post=post)
-        form = CommentForm()
+        comments = Comment.objects.filter(is_accepted=True, is_activated=True, post=post)
+        form = SimpleCommentForm()
         context = {
             'parent': parent,
             'categories': categories,
@@ -101,6 +101,16 @@ def posts_of(request, username):
     tags = Tag.objects.all()
     posts = Post.objects.filter(is_accepted=True, is_activated=True, creator=blog_user)
     return render(request, 'blog/posts_of.html', {'categories': categories, 'tags': tags, 'posts': posts})
+
+
+@login_required
+def my_works(request):
+    blog_user = request.user
+    categories = Category.objects.filter(parent=None)
+    tags = Tag.objects.all()
+    posts = Post.objects.filter(creator=blog_user)
+    comments = Comment.objects.filter(creator=blog_user)
+    return render(request, 'blog/my_works.html', {'categories': categories, 'tags': tags, 'posts': posts, 'comments': comments})
 
 
 def search(request):
