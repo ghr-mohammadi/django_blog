@@ -10,13 +10,15 @@ def create_other_category():
 def get_group_permissions(group):
     def __get_simple_permissions():
         add_comment_permission = Permission.objects.get(name='Can add کامنت')
-        add_like_permission = Permission.objects.get(name='Can add لایک')
-        return [add_comment_permission, add_like_permission]
+        add_postlike_permission = Permission.objects.get(name='Can add پست‌لایک')
+        add_commentlike_permission = Permission.objects.get(name='Can add کامنت‌لایک')
+        return [add_comment_permission, add_postlike_permission, add_commentlike_permission]
 
     def __get_writer_permissions():
         add_post_permission = Permission.objects.get(name='Can add پست')
+        add_tag_permission = Permission.objects.get(name='Can add تگ')
         change_post_permission = Permission.objects.get(name='Can change پست')
-        return list(set(__get_simple_permissions() + [add_post_permission, change_post_permission]))
+        return list(set(__get_simple_permissions() + [add_post_permission, add_tag_permission, change_post_permission]))
 
     def __get_editor_permissions():
         change_comment_permission = Permission.objects.get(name='Can change کامنت')

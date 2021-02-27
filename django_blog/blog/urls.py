@@ -15,5 +15,6 @@ urlpatterns = [
     # path('my-works/posts/<int:id>/', views.my_post, name='my_post'),
     # path('my-works/comments/<int:id>/', views.my_comment, name='my_comment'),
     path('search/', views.search, name='search'),
+    path('create-post/', views.create_post, name='create_post'),
     path('logout/', views.logout_view, name='logout')
 ]

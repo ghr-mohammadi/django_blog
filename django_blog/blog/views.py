@@ -1,12 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import Permission
 from django.db.models.expressions import RawSQL
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from .forms import SimpleCommentForm
+from .forms import SimpleCommentForm, PostForm
 from .models import Category, Tag, Post, Comment, BlogUser
 
 
@@ -111,6 +112,24 @@ def my_works(request):
     posts = Post.objects.filter(creator=blog_user)
     comments = Comment.objects.filter(creator=blog_user)
     return render(request, 'blog/my_works.html', {'categories': categories, 'tags': tags, 'posts': posts, 'comments': comments})
+
+
+@require_http_methods(["GET", "POST"])
+@permission_required('blog.add_post')
+def create_post(request):
+    blog_user = request.user
+    categories = Category.objects.filter(parent=None)
+    tags = Tag.objects.all()
+    if request.method == 'POST':
+        post = PostForm(request.POST, request.FILES).save(commit=False)
+        post.creator = blog_user
+        post.save()
+        messages.success(request, 'پست شما با موفقیت ثبت شد و پس از تایید نهایی برای نمایش عمومی در سایت قرار می‌گیرد.')
+        return HttpResponseRedirect(reverse('blog:create_post'))
+    else:
+        messages.info(request, 'شما می‌تواند با استفاده از فرم زیر پست را منتشر کنید.')
+        form = PostForm()
+        return render(request, 'blog/create_post.html', {'categories': categories, 'tags': tags, 'form': form})
 
 
 def search(request):

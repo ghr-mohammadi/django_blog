@@ -42,6 +42,7 @@ class AbstractText(models.Model):
 class Category(models.Model):
     name = models.CharField(verbose_name='دسته‌بندی', max_length=80, unique=True)
     parent = models.ForeignKey('self', verbose_name='زیر مجموعه', on_delete=models.CASCADE, null=True, blank=True)
+    creator = models.ForeignKey(BlogUser, verbose_name='نویسنده', null=True, blank=True, on_delete=models.SET_NULL)
 
     # def delete(self, *args, **kwargs):
     #     if self.parent:
@@ -63,6 +64,7 @@ class Category(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(verbose_name='تگ', max_length=80, unique=True)
+    creator = models.ForeignKey(BlogUser, verbose_name='نویسنده', null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name

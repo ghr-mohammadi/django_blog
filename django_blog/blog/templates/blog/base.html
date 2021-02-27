@@ -31,6 +31,11 @@
                     <a class="nav-link" href="{% url 'blog:my_works' %}">نوشته‌های من</a>
                 </li>
                 {% endif %}
+                {% if perms.blog.add_post %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'blog:create_post' %}">ایجاد پست</a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link d-md-none" href="{% url 'blog:categories' %}">دسته‌بندی</a>
                 </li>
@@ -198,11 +203,11 @@
 </div>
 <footer class="w-100 mx-auto" style="height: 10em;"></footer>
 </body>
-{% block script %}
-<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-{% endblock %}
-{% if user.is_authenticated %}
 <script type="text/javascript" src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'blog/js/script.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+{% block script %}
+{% if user.is_authenticated %}
+<script type="text/javascript" src="{% static 'blog/js/opinion.js' %}"></script>
 {% endif %}
+{% endblock %}
 </html>
