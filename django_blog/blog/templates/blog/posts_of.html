@@ -1,3 +1,17 @@
 {% extends "blog/base.html" %}
 
 {% block title %} پست‌های {{ user }} {% endblock %}
+
+{% block body %}
+{% if not posts %}
+<div class="col-12 col-md-8">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">این کاربر تا کنون پستی را ثبت نکرده است.</h5>
+        </div>
+    </div>
+</div>
+{% else %}
+{{ block.super }}
+{% endif %}
+{% endblock %}

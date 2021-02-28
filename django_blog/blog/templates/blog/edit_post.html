@@ -1,0 +1,59 @@
+{% extends "blog/base.html" %}
+
+{% block title %} اصلاح پست {% endblock %}
+
+{% block body %}
+<div class="col-12 col-md-8">
+    {% if messages %}
+    {% for message in messages %}
+    <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" {% endif %} role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% load bootstrap4 %}
+    <form method="post" enctype='multipart/form-data'>
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.name == "title" or field.name == "text" %}
+                {% bootstrap_field field field_class="mb-2" label_class="d-none" %}
+            {% elif field.name == "image" %}
+                {% bootstrap_field field field_class="mb-2" label_class="mb-2" %}
+            {% else %}
+                {% bootstrap_field field label_class="mt-2 mb-1" %}
+            {% endif %}
+        {% endfor %}
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary mt-3 px-5">ثبت پست</button>
+        </div>
+    </form>
+</div>
+
+<div class="modal fade" id="createTagModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تگ مورد نظر خود را بسازید.</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="add_tag" class="col-form-label">نام تگ:</label>
+                        <input type="text" class="form-control" id="add_tag" name="add_tag">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btn_add_tag">اضافه کردن تگ</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% load static %}
+<script type="text/javascript" src="{% static 'blog/js/create_post.js' %}"></script>
+{% endblock %}

@@ -35,7 +35,7 @@
             <div class="d-flex justify-content-between">
                 <small class="text-muted my-auto">
                     نوشته شده توسط:
-                    <a class="btn-outline-secondary text-decoration-none p-2 rounded" href="{% url 'blog:posts_of' post.creator.id %}">{{ post.creator.username }}</a>
+                    <a class="btn-outline-secondary text-decoration-none p-2 rounded" href="{% url 'blog:posts_of' post.creator %}">{{ post.creator.username }}</a>
                     {{ post.create_datetime | to_jalali }}
                 </small>
                 {% if user.is_authenticated %}

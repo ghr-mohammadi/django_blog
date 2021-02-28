@@ -1,5 +1,5 @@
 $(function () {
-    $("br").addClass("d-none");
+    $("br:first").addClass("d-none");
 
     var $id_tags = $("label[for=id_tags]");
     $("<span/>", {

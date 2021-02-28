@@ -3,8 +3,9 @@
 {% block title %} نوشته‌های من {% endblock %}
 
 
-{% block body %}
 {% load static %}
+
+{% block body %}
 {% load jalali %}
 {% load opinion %}
 <div class="col-12 col-md-8">
@@ -25,16 +26,42 @@
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">
-                <h4 class="d-inline">کامنت‌ها</h4>
+                <h4 class="d-inline">نظرها</h4>
             </button>
         </li>
     </ul>
     <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active border border-1 p-1" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+        <div class="tab-pane fade show active border border-top-0 p-1" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+            {% if not posts %}
+            {% if perms.blog.add_post %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">شما تا کنون پستی را منتشر نکرده اید.</h5>
+                    <p class="card-text">برای ثبت پست می‌توانید از دکمه زیر استفاده کنید.</p>
+                    <br/>
+                    <div class="d-flex justify-content-end">
+                        <a class="btn btn-primary mb-2" id="btn_create_post" href="{% url 'blog:create_post' %}">
+                            ایجاد پست جدید
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">متاسفانه شما امکان ثبت پست را ندارید.</h5>
+                    <p class="card-text">برای ثبت پست بایستی حساب شما به «نویسنده»، «ویرایشگر» و یا «مدیر» ارتقاع یابد.</p>
+                    <br/>
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
             {% for post in posts %}
             <div class="card mb-3">
-                <div class="{% if not post.is_accepted %}inactive-card{% endif %}">
+                <div class="{% if not post.is_accepted or not post.is_activated %}inactive-card{% endif %}">
+                    {% if post.is_accepted and post.is_activated %}
                     <a href="{% url 'blog:post' post.id %}">
+                    {% endif %}
                         <div class="text-center bg-light">
                             {% if post.image %}
                             <img src="/media/{{ post.image }}" class="img-post">
@@ -42,7 +69,9 @@
                             <img src="{% static 'icon/No-image-available.jpg' %}" class="img-post">
                             {% endif %}
                         </div>
+                    {% if post.is_accepted and post.is_activated %}
                     </a>
+                    {% endif %}
                     <div class="card-body">
                         <h5 class="card-title">{{ post.title | truncatewords:12 }}</h5>
                         <p class="card-text">{{ post.text | truncatewords:40 | linebreaks }}</p>
@@ -71,16 +100,27 @@
                         </div>
                     </div>
                 </div>
-                <a type="button" href="{% url 'blog:home' %}">
+                <a type="button" href="{% url 'blog:edit_post' post.id %}">
                     <img src="{% static 'icon/edit.png' %}" class="edit-icon rounded-circle">
                 </a>
             </div>
             {% endfor %}
         </div>
-        <div class="tab-pane fade border border-1 p-1" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+        <div class="tab-pane fade border border-top-0 p-1" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+            {% if not comments %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">شما تا کنون نظری را منتشر نکرده اید.</h5>
+                    <p class="card-text">شما می‌توانید با مراجعه به صفحه پست، نظر خود در مورد آن ثبت کنید.</p>
+                    <br/>
+                </div>
+            </div>
+            {% endif %}
             {% for comment in comments %}
-            <div class="card mb-2{% if not comment.post.is_accepted %} inactive-card{% endif %}">
+            <div class="card mb-2{% if not comment.post.is_accepted or not comment.post.is_activated %} inactive-card{% endif %}">
+                {% if comment.post.is_accepted and comment.post.is_activated %}
                 <a href="{% url 'blog:post' comment.post.id %}">
+                {% endif %}
                     <div class="text-center bg-light edit-container">
                         {% if comment.post.image %}
                         <img src="/media/{{ comment.post.image }}" class="img-post">
@@ -88,10 +128,11 @@
                         <img src="{% static 'icon/No-image-available.jpg' %}" class="img-post">
                         {% endif %}
                     </div>
+                {% if comment.post.is_accepted and comment.post.is_activated %}
                 </a>
+                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ comment.post.title | truncatewords:12 }}</h5>
-                    <!--<p class="card-text">{{ comment.post.text | truncatewords:40 | linebreaks }}</p>-->
                     {% for tag in comment.post.tags.all %}
                     <a class="btn btn-outline-secondary mb-2" href="{% url 'blog:tag' tag.name %}" data-bs-toggle="tooltip" title="{{ tag.name }}">
                         {{ tag.name }}
@@ -142,7 +183,7 @@
                             </div>
                         </div>
                     </div>
-                    <a type="button" href="{% url 'blog:home' %}">
+                    <a type="button" href="{% url 'blog:edit_comment' comment.id %}">
                         <img src="{% static 'icon/edit.png' %}" class="edit-icon rounded-circle">
                     </a>
                 </div>
@@ -152,4 +193,9 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block script %}
+{{ block.super }}
+<script type="text/javascript" src="{% static 'blog/js/my_works.js' %}"></script>
 {% endblock %}

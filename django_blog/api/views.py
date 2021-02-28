@@ -76,7 +76,7 @@ def create_tag(request):
     except BlogUser.DoesNotExist:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     serialized_data = TagSerializer(data=request.data)
-    if serialized_data.is_valid() and user.has_perm('blog.add_post'):
+    if serialized_data.is_valid() and user.has_perm('blog.add_post'):  # پرمیشن اصلاح گردد
         name = serialized_data.validated_data['name']
         tag = Tag.objects.create(creator=user, name=name)
         messages.success(request, 'تگ مورد نظر شما با موفقیت ثبت شد.')

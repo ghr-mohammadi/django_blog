@@ -12,8 +12,11 @@ urlpatterns = [
     path('post/<int:id>/', views.post, name='post'),
     path('posts-of/<username>/', views.posts_of, name='posts_of'),
     path('my-works/', views.my_works, name='my_works'),
-    # path('my-works/posts/<int:id>/', views.my_post, name='my_post'),
-    # path('my-works/comments/<int:id>/', views.my_comment, name='my_comment'),
+    path('edit/', views.my_works),
+    path('edit/posts/', views.my_works),
+    path('edit/comments/', views.my_works),
+    path('edit/posts/<int:id>/', views.edit_post, name='edit_post'),
+    path('edit/comments/<int:id>/', views.edit_comment, name='edit_comment'),
     path('search/', views.search, name='search'),
     path('create-post/', views.create_post, name='create_post'),
     path('logout/', views.logout_view, name='logout')
