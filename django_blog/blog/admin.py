@@ -69,6 +69,7 @@ class BlogUserAdmin(UserAdmin):
     fieldsets[1][1]['fields'] += ('phone_number', 'image')
     fieldsets[2][1]['fields'] = ('is_active', 'groups', 'user_permissions')
     filter_horizontal = ['user_permissions']
+    readonly_fields = ['username', 'first_name', 'last_name', 'email', 'phone_number', 'image']
 
     def save_model(self, request, obj, form, change):
         if Group.objects.get(name='ویرایشگر') in form.cleaned_data['groups'] or Group.objects.get(name='مدیر') in form.cleaned_data['groups']:
