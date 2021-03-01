@@ -61,7 +61,7 @@
                 <div class="{% if not post.is_accepted or not post.is_activated %}inactive-card{% endif %}">
                     {% if post.is_accepted and post.is_activated %}
                     <a href="{% url 'blog:post' post.id %}">
-                    {% endif %}
+                        {% endif %}
                         <div class="text-center bg-light">
                             {% if post.image %}
                             <img src="/media/{{ post.image }}" class="img-post">
@@ -69,7 +69,7 @@
                             <img src="{% static 'icon/No-image-available.jpg' %}" class="img-post">
                             {% endif %}
                         </div>
-                    {% if post.is_accepted and post.is_activated %}
+                        {% if post.is_accepted and post.is_activated %}
                     </a>
                     {% endif %}
                     <div class="card-body">
@@ -100,9 +100,14 @@
                         </div>
                     </div>
                 </div>
-                <a type="button" href="{% url 'blog:edit_post' post.id %}">
-                    <img src="{% static 'icon/edit.png' %}" class="edit-icon rounded-circle">
-                </a>
+                <div>
+                    <a href="{% url 'blog:edit_post' post.id %}">
+                        <img src="{% static 'icon/edit.png' %}" class="edit-icon rounded-circle">
+                    </a>
+                    <a href="{% url 'blog:delete_post' post.id %}">
+                        <img src="{% static 'icon/trash.jpg' %}" class="edit-icon border border-dark rounded-circle mx-5">
+                    </a>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -120,7 +125,7 @@
             <div class="card mb-2{% if not comment.post.is_accepted or not comment.post.is_activated %} inactive-card{% endif %}">
                 {% if comment.post.is_accepted and comment.post.is_activated %}
                 <a href="{% url 'blog:post' comment.post.id %}">
-                {% endif %}
+                    {% endif %}
                     <div class="text-center bg-light edit-container">
                         {% if comment.post.image %}
                         <img src="/media/{{ comment.post.image }}" class="img-post">
@@ -128,7 +133,7 @@
                         <img src="{% static 'icon/No-image-available.jpg' %}" class="img-post">
                         {% endif %}
                     </div>
-                {% if comment.post.is_accepted and comment.post.is_activated %}
+                    {% if comment.post.is_accepted and comment.post.is_activated %}
                 </a>
                 {% endif %}
                 <div class="card-body">
@@ -183,9 +188,14 @@
                             </div>
                         </div>
                     </div>
-                    <a type="button" href="{% url 'blog:edit_comment' comment.id %}">
-                        <img src="{% static 'icon/edit.png' %}" class="edit-icon rounded-circle">
-                    </a>
+                    <div>
+                        <a href="{% url 'blog:edit_comment' comment.id %}">
+                            <img src="{% static 'icon/edit.png' %}" class="edit-icon rounded-circle">
+                        </a>
+                        <a href="{% url 'blog:delete_comment' comment.id %}">
+                            <img src="{% static 'icon/trash.jpg' %}" class="edit-icon border border-dark rounded-circle mx-5">
+                        </a>
+                    </div>
                 </div>
             </div>
             {% endfor %}

@@ -16,7 +16,9 @@ urlpatterns = [
     path('edit/posts/', views.my_works),
     path('edit/comments/', views.my_works),
     path('edit/posts/<int:id>/', views.edit_post, name='edit_post'),
+    path('delete/posts/<int:id>/', views.delete_post, name='delete_post'),
     path('edit/comments/<int:id>/', views.edit_comment, name='edit_comment'),
+    path('delete/comments/<int:id>/', views.delete_comment, name='delete_comment'),
     path('search/', views.search, name='search'),
     path('create-post/', views.create_post, name='create_post'),
     path('logout/', views.logout_view, name='logout')

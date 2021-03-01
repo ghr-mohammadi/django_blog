@@ -77,7 +77,7 @@ def post(request, id):
         form = SimpleCommentForm(request.POST)
         if form.is_valid():
             Comment.objects.create(creator=request.user, text=form.cleaned_data['text'], is_activated=True, post=post)
-            messages.info(request, 'نظر شما با موفقیت ثبت شد. پس از تایید نهایی نظر شما در سایت قرار می‌گیرد.')
+            messages.success(request, 'نظر شما با موفقیت ثبت شد. پس از تایید نهایی نظر شما در سایت قرار می‌گیرد.')
             return HttpResponseRedirect(reverse('blog:post', args=[id]))
     else:
         parent = post.category.parent
@@ -136,7 +136,7 @@ def create_post(request):
 
 
 @require_http_methods(["GET", "POST"])
-@permission_required('blog.add_post')  # پرمیشن اصلاح گردد
+@permission_required('blog.change_post')
 def edit_post(request, id):
     post = get_object_or_404(Post, id=id)
     blog_user = request.user
@@ -172,8 +172,20 @@ def edit_post(request, id):
         return render(request, 'blog/edit_post.html', {'categories': categories, 'tags': tags, 'form': form})
 
 
+@permission_required('blog.delete_post')
+def delete_post(request, id):
+    post = get_object_or_404(Post, id=id)
+    blog_user = request.user
+    if post.creator != blog_user:
+        messages.error(request, 'شما امکان حذف پست در خواست شده را ندارید.')
+        return HttpResponseRedirect(reverse('blog:my_works'))
+    post.delete()
+    messages.success(request, 'پست در خواست شده با موفقیت حذف شد.')
+    return HttpResponseRedirect(reverse('blog:my_works'))
+
+
 @require_http_methods(["GET", "POST"])
-@login_required
+@permission_required('blog.change_comment')
 def edit_comment(request, id):
     comment = get_object_or_404(Comment, id=id)
     blog_user = request.user
@@ -199,6 +211,18 @@ def edit_comment(request, id):
         }
         form = CommentForm(initial=init_val)
         return render(request, 'blog/edit_post.html', {'categories': categories, 'tags': tags, 'form': form})
+
+
+@permission_required('blog.delete_comment')
+def delete_comment(request, id):
+    comment = get_object_or_404(Comment, id=id)
+    blog_user = request.user
+    if comment.creator != blog_user:
+        messages.error(request, 'شما امکان حذف نظر در خواست شده را ندارید.')
+        return HttpResponseRedirect(reverse('blog:my_works'))
+    comment.delete()
+    messages.success(request, 'نظر در خواست شده با موفقیت حذف شد.')
+    return HttpResponseRedirect(reverse('blog:my_works'))
 
 
 def search(request):
