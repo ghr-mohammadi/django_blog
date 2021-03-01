@@ -74,7 +74,7 @@ class Tag(models.Model):
         verbose_name_plural = "تگ‌ها"
 
 
-def get_patent(*args, **kwargs):
+def get_patent():
     pass
 
 

@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
+from django.core.paginator import Paginator
 from django.db.models.expressions import RawSQL
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
@@ -15,7 +16,10 @@ def home(request):
     categories = Category.objects.filter(parent=None)
     tags = Tag.objects.all()
     posts = Post.objects.filter(is_accepted=True, is_activated=True)
-    return render(request, 'blog/home.html', {'categories': categories, 'tags': tags, 'posts': posts})
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_posts = paginator.get_page(page_number)
+    return render(request, 'blog/home.html', {'categories': categories, 'tags': tags, 'posts': page_posts})
 
 
 def category(request, name):
@@ -70,30 +74,29 @@ def post(request, id):
     post = get_object_or_404(Post, id=id)
     if not post.is_accepted or not post.is_activated:
         return HttpResponseForbidden()
+    form = SimpleCommentForm()
     if request.method == 'POST':
         if not request.user.is_authenticated:
-            messages.warning(request, 'برای ثبت نظر باید با حساب کاربری وارد شوید.')
+            messages.warning(request, 'برای ثبت کامنت باید با حساب کاربری وارد شوید.')
             return HttpResponseRedirect(reverse('blog:post', args=[id]))
         form = SimpleCommentForm(request.POST)
         if form.is_valid():
             Comment.objects.create(creator=request.user, text=form.cleaned_data['text'], is_activated=True, post=post)
-            messages.success(request, 'نظر شما با موفقیت ثبت شد. پس از تایید نهایی نظر شما در سایت قرار می‌گیرد.')
+            messages.success(request, 'کامنت شما با موفقیت ثبت شد. پس از تایید نهایی کامنت شما در سایت قرار می‌گیرد.')
             return HttpResponseRedirect(reverse('blog:post', args=[id]))
-    else:
-        parent = post.category.parent
-        categories = Category.objects.filter(parent=parent)
-        tags = Tag.objects.all()
-        comments = Comment.objects.filter(is_accepted=True, is_activated=True, post=post)
-        form = SimpleCommentForm()
-        context = {
-            'parent': parent,
-            'categories': categories,
-            'tags': tags,
-            'post': post,
-            'comments': comments,
-            'form': form
-        }
-        return render(request, 'blog/post.html', context)
+    parent = post.category.parent
+    categories = Category.objects.filter(parent=parent)
+    tags = Tag.objects.all()
+    comments = Comment.objects.filter(is_accepted=True, is_activated=True, post=post)
+    context = {
+        'parent': parent,
+        'categories': categories,
+        'tags': tags,
+        'post': post,
+        'comments': comments,
+        'form': form
+    }
+    return render(request, 'blog/post.html', context)
 
 
 def posts_of(request, username):
@@ -120,6 +123,7 @@ def create_post(request):
     blog_user = request.user
     categories = Category.objects.filter(parent=None)
     tags = Tag.objects.all()
+    form = PostForm()
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
@@ -129,10 +133,8 @@ def create_post(request):
             form.save_m2m()
             messages.success(request, 'پست شما با موفقیت ثبت شد و پس از تایید نهایی برای نمایش عمومی در سایت قرار می‌گیرد.')
             return HttpResponseRedirect(reverse('blog:create_post'))
-    else:
-        messages.info(request, 'شما می‌تواند با استفاده از فرم زیر پست را منتشر کنید.')
-        form = PostForm()
-        return render(request, 'blog/create_post.html', {'categories': categories, 'tags': tags, 'form': form})
+    messages.info(request, 'شما می‌تواند با استفاده از فرم زیر پست خود را منتشر کنید.')
+    return render(request, 'blog/create_post.html', {'categories': categories, 'tags': tags, 'form': form})
 
 
 @require_http_methods(["GET", "POST"])
@@ -158,6 +160,8 @@ def edit_post(request, id):
             post.save()
             messages.success(request, 'پست شما با موفقیت اصلاح شد و پس از تایید نهایی برای نمایش عمومی در سایت قرار می‌گیرد.')
             return HttpResponseRedirect(reverse('blog:my_works'))
+        else:
+            return render(request, 'blog/edit_post.html', {'categories': categories, 'tags': tags, 'form': form})
     else:
         messages.info(request, 'شما می‌تواند با استفاده از فرم زیر پست خود را اصلاح کنید.')
         init_val = {
@@ -190,7 +194,7 @@ def edit_comment(request, id):
     comment = get_object_or_404(Comment, id=id)
     blog_user = request.user
     if comment.creator != blog_user:
-        messages.warning(request, 'شما امکان اصلاح نظر در خواست شده را ندارید.')
+        messages.warning(request, 'شما امکان اصلاح کامنت در خواست شده را ندارید.')
         return HttpResponseRedirect(reverse('blog:my_works'))
     categories = Category.objects.filter(parent=None)
     tags = Tag.objects.all()
@@ -201,10 +205,12 @@ def edit_comment(request, id):
             comment.is_activated = form.cleaned_data['is_activated']
             comment.is_accepted = False
             comment.save()
-            messages.success(request, 'نظر شما با موفقیت اصلاح شد و پس از تایید نهایی برای نمایش عمومی در سایت قرار می‌گیرد.')
+            messages.success(request, 'کامنت شما با موفقیت اصلاح شد و پس از تایید نهایی برای نمایش عمومی در سایت قرار می‌گیرد.')
             return HttpResponseRedirect(reverse('blog:my_works'))
+        else:
+            return render(request, 'blog/edit_post.html', {'categories': categories, 'tags': tags, 'form': form})
     else:
-        messages.info(request, 'شما می‌تواند با استفاده از فرم زیر نظر خود را اصلاح کنید.')
+        messages.info(request, 'شما می‌تواند با استفاده از فرم زیر کامنت خود را اصلاح کنید.')
         init_val = {
             'text': comment.text,
             'is_activated': comment.is_activated
@@ -218,10 +224,10 @@ def delete_comment(request, id):
     comment = get_object_or_404(Comment, id=id)
     blog_user = request.user
     if comment.creator != blog_user:
-        messages.error(request, 'شما امکان حذف نظر در خواست شده را ندارید.')
+        messages.error(request, 'شما امکان حذف کامنت در خواست شده را ندارید.')
         return HttpResponseRedirect(reverse('blog:my_works'))
     comment.delete()
-    messages.success(request, 'نظر در خواست شده با موفقیت حذف شد.')
+    messages.success(request, 'کامنت در خواست شده با موفقیت حذف شد.')
     return HttpResponseRedirect(reverse('blog:my_works'))
 
 
@@ -237,7 +243,10 @@ def bests(request):
     categories = Category.objects.filter(parent=None)
     tags = Tag.objects.all()
     posts = Post.objects.filter(is_accepted=True, is_activated=True).order_by('-like_qty', 'dislike_qty')
-    return render(request, 'blog/bests.html', {'categories': categories, 'tags': tags, 'posts': posts})
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_posts = paginator.get_page(page_number)
+    return render(request, 'blog/bests.html', {'categories': categories, 'tags': tags, 'posts': page_posts})
 
 
 def logout_view(request):
