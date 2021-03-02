@@ -1,5 +1,5 @@
 from django import forms
-from .models import Comment, Post
+from .models import Comment, Post, BlogUser
 
 
 class SimpleCommentForm(forms.ModelForm):
@@ -18,3 +18,9 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['text', 'is_activated']
+
+
+class BlogUserForm(forms.ModelForm):
+    class Meta:
+        model = BlogUser
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'image']

@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from .forms import SimpleCommentForm, PostForm, CommentForm
+from .forms import SimpleCommentForm, PostForm, CommentForm, BlogUserForm
 from .models import Category, Tag, Post, Comment, BlogUser
 
 
@@ -150,7 +150,10 @@ def edit_post(request, id):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            post.image = form.cleaned_data['image'] if form.cleaned_data['image'] else None
+            if form.cleaned_data['image']:
+                post.image = form.cleaned_data['image']
+            elif form.cleaned_data['image'] is False:
+                post.image = None
             post.title = form.cleaned_data['title']
             post.text = form.cleaned_data['text']
             post.category = form.cleaned_data['category']
@@ -232,11 +235,48 @@ def delete_comment(request, id):
 
 
 def search(request):
-    name = '%' + request.GET.get('input') + '%'
+    name = request.GET.get('input').strip()
+    if not name:
+        messages.error(request, 'لطفاً برای استفاده از بخش جست‌وجو، ورودی صحیح وارد کنید.')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    name = '%' + name + '%'
     categories = Category.objects.raw('select * from blog_category where name ilike %s;', [name])
     tags = Tag.objects.raw('select * from blog_tag where name ilike %s;', [name])
     posts = Post.objects.raw('select * from blog_post where text ilike %s or title ilike %s;', [name, name])
     return render(request, 'blog/search.html', {'categories': categories, 'tags': tags, 'posts': posts})
+
+
+@require_http_methods(["GET", "POST"])
+@login_required
+def profile(request):
+    categories = Category.objects.filter(parent=None)
+    tags = Tag.objects.all()
+    user = request.user
+    if request.method == 'POST':
+        form = BlogUserForm(request.POST, request.FILES)
+        if form.is_valid():
+            if form.cleaned_data['image']:
+                user.image = form.cleaned_data['image']
+            elif form.cleaned_data['image'] is False:
+                user.image = None
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email']
+            user.phone_number = form.cleaned_data['phone_number']
+            user.save()
+            messages.success(request, 'اطلاعات شما با موفقیت اصلاح شد.')
+            return HttpResponseRedirect(reverse('blog:profile'))
+        messages.error(request, 'خطا در ویرایش اطلاعات.')
+        return render(request, 'blog/profile.html', {'categories': categories, 'tags': tags, 'form': form})
+    form = BlogUserForm(initial={
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'email': user.email,
+        'phone_number': user.phone_number,
+        'image': user.image
+    })
+    messages.info(request, 'شما می‌تواند با استفاده از فرم زیر اطلاعات شخصی خود را اصلاح کنید.')
+    return render(request, 'blog/profile.html', {'categories': categories, 'tags': tags, 'form': form})
 
 
 def bests(request):

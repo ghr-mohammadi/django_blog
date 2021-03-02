@@ -54,13 +54,15 @@
             </form>
             <div class="d-flex justify-content-end my-3 my-md-auto mx-5 mx-md-0">
                 {% if user.is_authenticated %}
+                <a href="{% url 'blog:profile' %}">
                 {% if user.image %}
                 <img class="img-profile rounded-circle border border-light mx-2" src="/media/{{ user.image }}">
                 {% else %}
                 <img class="img-profile rounded-circle border border-light mx-2" src="/media/profile/user.jpg">
                 {% endif %}
+                </a>
                 <div class="btn-group rounded" role="group">
-                    <a type="button" class="btn btn-outline-light border-end">{{ user.username }}</a>
+                    <a type="button" class="btn btn-outline-light border-end" href="{% url 'blog:profile' %}">{{ user.username }}</a>
                     <a type="button" class="btn btn-outline-light border-start" href="{% url 'blog:logout' %}">خروج</a>
                 </div>
                 {% else %}
