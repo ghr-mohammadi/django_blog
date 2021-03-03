@@ -24,8 +24,13 @@
         </div>
     </div>
 
-    <h3 class="my-4">نام کاربری: {{ user }}</h3>
-
+    <div class="d-flex justify-content-between">
+        <h3 class="my-4">نام کاربری: {{ user }}</h3>
+        <div class="d-flex align-items-center">
+            <a class="btn btn-warning px-4 me-4" href="{% url 'accounts:password_change' %}">تغییر گذرواژه</a>
+            <a class="btn btn-danger px-4" href="{% url 'accounts:delete' %}">حذف حساب کاربری</a>
+        </div>
+    </div>
     {% load bootstrap4 %}
     <form method="post" enctype='multipart/form-data'>
         {% csrf_token %}
@@ -33,7 +38,7 @@
             {% bootstrap_field field label_class="mt-2 mb-1" %}
         {% endfor %}
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary mt-3 px-5">اصلاح اطلاعات</button>
+            <button type="submit" class="btn btn-primary mt-3 px-5">ثبت اطلاعات</button>
         </div>
     </form>
 
